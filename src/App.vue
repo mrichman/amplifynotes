@@ -1,14 +1,17 @@
 <template>
-  <div id="app">
-    <h1>Serverless Notes</h1>
-    <input type="text" v-model="title" placeholder="Note title" />
-    <input type="text" v-model="body" placeholder="Note body" />
-    <button v-on:click="createNote">Create Note</button>
-    <div v-for="item in notes" :key="item.id">
-      <h3>{{ item.title }}</h3>
-      <p>{{ item.body }}</p>
+  <amplify-authenticator>
+    <div id="app">
+      <h1>Serverless Notes</h1>
+      <input type="text" v-model="title" placeholder="Note title" />
+      <input type="text" v-model="body" placeholder="Note body" />
+      <button v-on:click="createNote">Create Note</button>
+      <div v-for="item in notes" :key="item.id">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.body }}</p>
+      </div>
     </div>
-  </div>
+    <amplify-sign-out></amplify-sign-out>
+  </amplify-authenticator>
 </template>
 
 <script>
