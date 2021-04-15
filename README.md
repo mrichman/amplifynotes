@@ -1,24 +1,7 @@
-# amplifynotes
+# Serverless Notes
 
-## Project setup
-```
-npm install
-```
+This application uses Vue.js, Amplify, AppSync, DynamoDB, and Cognito.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## TODO
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- Notes are global, and not scoped to the currently authenticated user.
