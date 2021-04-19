@@ -1,5 +1,6 @@
-type Note @model {
+type Note @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   title: String!
-  body: String
+  body: String!
+  tags: String
 }

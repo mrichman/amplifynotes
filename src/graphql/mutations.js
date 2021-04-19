@@ -10,8 +10,10 @@ export const createNote = /* GraphQL */ `
       id
       title
       body
+      tags
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -24,8 +26,10 @@ export const updateNote = /* GraphQL */ `
       id
       title
       body
+      tags
       createdAt
       updatedAt
+      owner
     }
   }
 `;
@@ -38,8 +42,10 @@ export const deleteNote = /* GraphQL */ `
       id
       title
       body
+      tags
       createdAt
       updatedAt
+      owner
     }
   }
 `;
