@@ -71,21 +71,28 @@
 
         <div class="container bg-light p-3 rounded">
           <h2>Notes</h2>
-          <ul class="list-group">
+          <div class="list-group">
             <div v-for="item in notes" :key="item.id">
-              <li
-                class="list-group-item list-group-item-action flex-column align-items-start"
+              <div
+                href="#"
+                class="list-group-item flex-column align-items-start"
               >
                 <div class="d-flex w-100 justify-content-between">
-                  <h4 class="mb-1">{{ item.title }}</h4>
+                  <h5 class="mb-1">{{ item.title }}</h5>
+                  <button
+                    @click="deleteNote(item.id)"
+                    class="btn btn-outline-danger btn-sm"
+                  >
+                    X
+                  </button>
                 </div>
                 <p class="mb-1">
                   {{ item.body }}
                 </p>
-                <small class="text-muted">{{ item.updatedAt }}</small>
-              </li>
+                <small>{{ item.updatedAt }}</small>
+              </div>
             </div>
-          </ul>
+          </div>
         </div>
       </main>
     </div>
@@ -94,7 +101,7 @@
 
 <script>
 import { API } from "aws-amplify";
-import { createNote } from "./graphql/mutations";
+import { createNote, deleteNote } from "./graphql/mutations";
 import { listNotes } from "./graphql/queries";
 import { onCreateNote } from "./graphql/subscriptions";
 
@@ -122,6 +129,16 @@ export default {
       });
       this.title = "";
       this.body = "";
+    },
+    async deleteNote(id) {
+      const note = {};
+      note.id = id;
+      console.log(note);
+      await API.graphql({
+        query: deleteNote,
+        variables: { input: note },
+      });
+      this.getNotes();
     },
     async getNotes() {
       const notes = await API.graphql({
