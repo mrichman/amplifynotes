@@ -12,4 +12,6 @@ applyPolyfills().then(() => {
   defineCustomElements(window);
 });
 
-createApp(App).mount('#app')
+const app = createApp(App);
+app.config.isCustomElement = tag => tag.startsWith('amplify-');
+app.mount('#app');

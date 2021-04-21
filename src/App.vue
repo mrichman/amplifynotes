@@ -127,14 +127,23 @@ export default {
       const notes = await API.graphql({
         query: listNotes,
       });
-      this.notes = notes.data.listNotes.items;
+      // sort descending by date
+      this.notes = notes.data.listNotes.items.sort((a, b) =>
+        a.updatedAt < b.updatedAt ? 1 : -1
+      );
     },
     subscribe() {
-      API.graphql({ query: onCreateNote }).subscribe({
+      console.log("Subscribing to onCreateNote");
+      API.graphql({
+        query: onCreateNote,
+        variables: { owner: "mrkrchm" },
+      }).subscribe({
         next: (eventData) => {
-          let note = eventData.value.data.onCreateNote;
-          if (this.notes.some((item) => item.title === note.title)) return; // remove duplications
-          this.notes = [...this.notes, note];
+          console.log(eventData);
+          this.getNotes();
+        },
+        error: (error) => {
+          console.warn(error);
         },
       });
     },
@@ -143,10 +152,6 @@ export default {
 </script>
 
 <style>
-/* GLOBAL STYLES
--------------------------------------------------- */
-/* Padding below the footer and lighter body text */
-
 body {
   font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
