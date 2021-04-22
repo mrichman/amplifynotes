@@ -1,5 +1,6 @@
 <template>
   <amplify-authenticator>
+    <div v-if="authState !== 'signedin'">You are signed out.</div>
     <div id="app">
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <a class="navbar-brand" href="#">Serverless Notes</a>
@@ -16,25 +17,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
-            <!-- <li class="nav-item active">
-                <a class="nav-link" href="#"
-                  >Home <span class="sr-only">(current)</span></a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-              </li> -->
+            <li class="nav-item"></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right mr-4 text-light">
+            <div v-if="authState === 'signedin' && user">
+              Hello, {{ user.username }}
+            </div>
           </ul>
           <form class="form-inline mt-2 mt-md-0">
-            <!-- <input
-                class="form-control mr-sm-2"
-                type="text"
-                placeholder="Search"
-                aria-label="Search"
-              /> -->
             <amplify-sign-out></amplify-sign-out>
           </form>
         </div>
@@ -104,19 +94,31 @@ import { API } from "aws-amplify";
 import { createNote, deleteNote } from "./graphql/mutations";
 import { listNotes } from "./graphql/queries";
 import { onCreateNote } from "./graphql/subscriptions";
+import { onAuthUIStateChange } from "@aws-amplify/ui-components";
 
 export default {
   name: "app",
-  async created() {
+  created() {
+    this.unsubscribeAuth = onAuthUIStateChange((authState, authData) => {
+      console.log("AuthUIStateChange");
+      console.log(authData);
+      this.authState = authState;
+      this.user = authData;
+      this.subscribe(authData.username);
+    });
     this.getNotes();
-    this.subscribe();
   },
   data() {
     return {
       title: "",
       body: "",
       notes: [],
+      user: undefined,
+      authState: undefined,
     };
+  },
+  beforeUnmount() {
+    this.unsubscribeAuth();
   },
   methods: {
     async createNote() {
@@ -149,11 +151,11 @@ export default {
         a.updatedAt < b.updatedAt ? 1 : -1
       );
     },
-    subscribe() {
-      console.log("Subscribing to onCreateNote");
+    subscribe(username) {
+      console.log("Subscribing to onCreateNote: " + username);
       API.graphql({
         query: onCreateNote,
-        variables: { owner: "mrkrchm" },
+        variables: { owner: username },
       }).subscribe({
         next: (eventData) => {
           console.log(eventData);
